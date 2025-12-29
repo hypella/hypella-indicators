@@ -129,6 +129,15 @@ Run the test suite using `pytest`:
 poetry run pytest
 ```
 
+### Submission Process
+
+1.  **Fork the Repository**: Create a fork of the repository to your own GitHub account.
+2.  **Create a Feature Branch**: Create a new branch for your changes (e.g., `feat/add-rsi-indicator`).
+3.  **Implement & Test**: Apply your changes and ensure all tests pass.
+4.  **Create Pull Request**: Submit a pull request to the main repository. 
+
+*Note: Version numbers and the official CHANGELOG will be updated by maintainers upon release.*
+
 ### Development Guidelines
 
 -   **Type Hinting**: All methods must be fully type-hinted.
