@@ -88,3 +88,29 @@ indicators:
             default: 2.0
             label: "Multiplier"
             description: "Standard Deviation Multiplier"
+  atr:
+    latest: "1.0.0"
+    label: "ATR"
+    versions:
+      "1.0.0":
+        class: "hypella_indicators.indicators.atr.ATR"
+        description: "Average True Range"
+        arguments:
+          period:
+            type: int
+            default: 14
+            label: "Length"
+            description: "Number of periods for ATR calculation"
+  adx:
+    latest: "1.0.0"
+    label: "ADX"
+    versions:
+      "1.0.0":
+        class: "hypella_indicators.indicators.adx.ADX"
+        description: "Average Directional Index"
+        arguments:
+          period:
+            type: int
+            default: 14
+            label: "Length"
+            description: "Number of periods for ADX calculation"

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2025-12-29
+
+### Added
+- **ADX**: ADX indicator with Wilder's Smoothing.
+- **ATR**: ATR indicator with Wilder's Smoothing.
+
 ## [1.0.1] - 2025-12-29
 
 ### Added
