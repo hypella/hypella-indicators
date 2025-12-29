@@ -2,6 +2,7 @@
 indicators:
   rsi:
     latest: "1.0.0"
+    label: "RSI"
     versions:
       "1.0.0":
         class: "hypella_indicators.indicators.rsi.RSI"
@@ -10,9 +11,11 @@ indicators:
           period:
             type: int
             default: 14
+            label: "Length"
             description: "Number of periods for RSI calculation"
   rsi_sma:
     latest: "1.0.0"
+    label: "RSI SMA"
     versions:
       "1.0.0":
         class: "hypella_indicators.indicators.rsi_sma.RSISMA"
@@ -21,13 +24,16 @@ indicators:
           rsi_period:
             type: int
             default: 14
+            label: "RSI Length"
             description: "RSI Lookback period"
           sma_period:
             type: int
             default: 14
+            label: "Smoothing Length"
             description: "Simple Moving Average period"
   sma:
     latest: "1.0.0"
+    label: "SMA"
     versions:
       "1.0.0":
         class: "hypella_indicators.indicators.sma.SMA"
@@ -35,10 +41,12 @@ indicators:
         arguments:
           period:
             type: int
-            default: 14
+            default: 9
+            label: "Length"
             description: "Moving Average period"
   ema:
     latest: "1.0.0"
+    label: "EMA"
     versions:
       "1.0.0":
         class: "hypella_indicators.indicators.ema.EMA"
@@ -46,10 +54,12 @@ indicators:
         arguments:
           period:
             type: int
-            default: 14
+            default: 9
+            label: "Length"
             description: "Exponential Moving Average period"
   volume_sma:
     latest: "1.0.0"
+    label: "Volume SMA"
     versions:
       "1.0.0":
         class: "hypella_indicators.indicators.volume_sma.VolumeSMA"
@@ -57,10 +67,12 @@ indicators:
         arguments:
           period:
             type: int
-            default: 14
+            default: 20
+            label: "MA Length"
             description: "Volume SMA period"
   bb:
     latest: "1.0.0"
+    label: "Bollinger Bands"
     versions:
       "1.0.0":
         class: "hypella_indicators.indicators.bb.BollingerBands"
@@ -69,8 +81,10 @@ indicators:
           period:
             type: int
             default: 20
+            label: "Length"
             description: "Bollinger Bands period"
           std_dev:
             type: float
             default: 2.0
+            label: "Multiplier"
             description: "Standard Deviation Multiplier"

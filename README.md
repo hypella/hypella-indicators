@@ -49,12 +49,14 @@ We welcome contributions of new indicators! Please follow these guidelines to en
       versions:
         "1.0.0":
           class: "hypella_indicators.indicators.ema.EMA"
+          label: "EMA"
           description: "Exponential Moving Average"
           arguments:
             period:
-          type: int
-          default: 8
-          description: "Number of periods for EMA calculation"
+              type: int
+              default: 8
+              label: "Period"
+              description: "Number of periods for EMA calculation"
     ```
 
 ### Versioning & Immutability Policy
@@ -76,6 +78,7 @@ If you need to change the behavior of an indicator:
 ```yaml
 ema:
   latest: "2.0.0"
+  label: "EMA"
   versions:
     "1.0.0":
       class: "hypella_indicators.indicators.ema.EMA"
@@ -84,8 +87,8 @@ ema:
       class: "hypella_indicators.indicators.ema_v2.EMAv2"
       description: "EMA with adjustable smoothing factor"
       arguments:
-        period: { type: int, default: 14 }
-        smoothing: { type: float, default: 2.0 }
+        period: { label: "Period", type: int, default: 14 }
+        smoothing: { label: "Smoothing", type: float, default: 2.0 }
 ```
 
 #### 3. Deprecation

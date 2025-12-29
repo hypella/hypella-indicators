@@ -1,6 +1,6 @@
 [project]
 name = "hypella-indicators"
-version = "1.0.0"
+version = "1.0.1"
 description = "Standard indicators library for the Hypella execution platform"
 readme = "README.md"
 authors = [
