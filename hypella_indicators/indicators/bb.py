@@ -2,7 +2,7 @@ from typing import List, Dict, Union
 import pandas as pd
 import math
 from collections import deque
-from hypella_indicators.core import Indicator, Candle
+from hypella_indicators.core import Indicator, CandleData
 
 class BollingerBands(Indicator):
     """
@@ -23,7 +23,7 @@ class BollingerBands(Indicator):
         super().reset()
         self._history = deque(maxlen=self.period)
 
-    def calculate(self, candles: List[Candle]) -> Dict[str, float]:
+    def calculate(self, candles: List[CandleData]) -> Dict[str, float]:
         if len(candles) < self.period:
             return {
                 "upper": 0.0,
@@ -69,7 +69,7 @@ class BollingerBands(Indicator):
             "percent_b": float(percent_b)
         }
 
-    def update(self, candle: Candle) -> Dict[str, float]:
+    def update(self, candle: CandleData) -> Dict[str, float]:
         self._history.append(candle.close)
         
         if len(self._history) < self.period:

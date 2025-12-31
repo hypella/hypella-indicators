@@ -1,7 +1,7 @@
 from typing import List
 import pandas as pd
 import numpy as np
-from hypella_indicators.core import Indicator, Candle
+from hypella_indicators.core import Indicator, CandleData
 
 class ATR(Indicator):
     """
@@ -23,7 +23,7 @@ class ATR(Indicator):
         self._prev_close = None
         self._count = 0
 
-    def calculate_series(self, candles: List[Candle]) -> pd.Series:
+    def calculate_series(self, candles: List[CandleData]) -> pd.Series:
         if len(candles) < 2:
             return pd.Series([0.0] * len(candles))
             
@@ -44,14 +44,14 @@ class ATR(Indicator):
         
         return atr
 
-    def calculate(self, candles: List[Candle]) -> float:
+    def calculate(self, candles: List[CandleData]) -> float:
         series = self.calculate_series(candles)
         if len(series) == 0:
             return 0.0
         val = series.iloc[-1]
         return 0.0 if pd.isna(val) else float(val)
 
-    def update(self, candle: Candle) -> float:
+    def update(self, candle: CandleData) -> float:
         if self._prev_close is None:
             self._prev_close = candle.close
             self._count = 1

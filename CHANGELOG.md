@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2025-12-31
+
+### Added
+- **Price**: Price indicator to provide the latest price of the current (open) candle.
+- **Candle**: Candle indicator to provide the raw candle fields (open, high, low, close, volume).
+
 ## [1.2.0] - 2025-12-31
 
 ### Added

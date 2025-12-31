@@ -1,6 +1,6 @@
 from typing import List
 import pandas as pd
-from hypella_indicators.core import Indicator, Candle
+from hypella_indicators.core import Indicator, CandleData
 from hypella_indicators.indicators.rsi import RSI
 from hypella_indicators.indicators.sma import SMA
 
@@ -25,7 +25,7 @@ class RSISMA(Indicator):
         self.rsi_indicator.reset()
         self.sma_indicator.reset()
 
-    def calculate(self, candles: List[Candle]) -> float:
+    def calculate(self, candles: List[CandleData]) -> float:
         # Get RSI series
         rsi_series = self.rsi_indicator.calculate_series(candles)
         
@@ -42,12 +42,12 @@ class RSISMA(Indicator):
             
         return float(last_val)
 
-    def update(self, candle: Candle) -> float:
+    def update(self, candle: CandleData) -> float:
         rsi_val = self.rsi_indicator.update(candle)
         
-        # We need to wrap the RSI value in a Candle for the SMA indicator
-        # since SMA.update expects a Candle object.
-        fake_candle = Candle(
+        # We need to wrap the RSI value in a CandleData for the SMA indicator
+        # since SMA.update expects a CandleData object.
+        fake_candle = CandleData(
             timestamp=candle.timestamp,
             open=rsi_val,
             high=rsi_val,

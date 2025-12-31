@@ -1,9 +1,9 @@
 import json
 import os
 from typing import List
-from hypella_indicators.core import Candle
+from hypella_indicators.core import CandleData
 
-def load_candles(filename: str = "candles.json") -> List[Candle]:
+def load_candles(filename: str = "candles.json") -> List[CandleData]:
     """
     Load candles from a JSON file in the tests/data directory.
     
@@ -28,7 +28,7 @@ def load_candles(filename: str = "candles.json") -> List[Candle]:
         
     candles = []
     for entry in data:
-        candles.append(Candle(
+        candles.append(CandleData(
             timestamp=entry['t'],
             open=float(entry['o']),
             high=float(entry['h']),

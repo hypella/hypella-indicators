@@ -1,7 +1,7 @@
 from typing import List, Dict, Union
 import pandas as pd
 import numpy as np
-from hypella_indicators.core import Indicator, Candle
+from hypella_indicators.core import Indicator, CandleData
 
 class RSI(Indicator):
     """
@@ -27,7 +27,7 @@ class RSI(Indicator):
         self._avg_loss = 0.0
         self._count = 0
 
-    def calculate_series(self, candles: List[Candle]) -> pd.Series:
+    def calculate_series(self, candles: List[CandleData]) -> pd.Series:
         if len(candles) < self.period:
             return pd.Series([0.0] * len(candles))
             
@@ -53,14 +53,14 @@ class RSI(Indicator):
         rsi = 100 - (100 / (1 + rs))
         return rsi
 
-    def calculate(self, candles: List[Candle]) -> float:
+    def calculate(self, candles: List[CandleData]) -> float:
         rsi = self.calculate_series(candles)
         if len(rsi) == 0:
             return 0.0
         val = rsi.iloc[-1]
         return 0.0 if pd.isna(val) else float(val)
 
-    def update(self, candle: Candle) -> float:
+    def update(self, candle: CandleData) -> float:
         if self._prev_close is None:
             self._prev_close = candle.close
             self._count = 1

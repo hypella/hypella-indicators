@@ -4,7 +4,7 @@ from typing import List, Union, Dict, Any
 import pandas as pd
 
 @dataclass
-class Candle:
+class CandleData:
     """Represents a standardized OHLCV candle."""
     timestamp: int  # Unix timestamp in milliseconds
     open: float
@@ -29,7 +29,18 @@ class Indicator(ABC):
     def __init__(self, **kwargs):
         """Initialize indicator with configuration arguments."""
         self.config = kwargs
+        self._id = f"{self.__class__.__name__}_{kwargs}"
         self.reset()
+
+    def __eq__(self, other):
+        if not isinstance(other, Indicator):
+            return False
+        return self.__class__ == other.__class__ and self.config == other.config
+
+    def __hash__(self):
+        # Convert dict to sorted tuple of items for hashing
+        config_tuple = tuple(sorted(self.config.items()))
+        return hash((self.__class__.__name__, config_tuple))
 
     def reset(self):
         """Reset the indicator state."""
@@ -41,12 +52,12 @@ class Indicator(ABC):
         """Return the latest calculated value."""
         return self._value
 
-    def candles_to_df(self, candles: List[Candle]) -> pd.DataFrame:
-        """Helper to convert list of Candles to DataFrame."""
+    def candles_to_df(self, candles: List[CandleData]) -> pd.DataFrame:
+        """Helper to convert list of CandleData to DataFrame."""
         return pd.DataFrame([c.to_dict() for c in candles])
 
     @abstractmethod
-    def calculate(self, candles: List[Candle]) -> Union[float, Dict[str, float]]:
+    def calculate(self, candles: List[CandleData]) -> Union[float, Dict[str, float]]:
         """
         Calculate the latest indicator value based on historical candles (stateless).
         
@@ -59,7 +70,7 @@ class Indicator(ABC):
         pass
 
     @abstractmethod
-    def update(self, candle: Candle) -> Union[float, Dict[str, float]]:
+    def update(self, candle: CandleData) -> Union[float, Dict[str, float]]:
         """
         Update indicator with a new candle and return the latest value (stateful).
         
@@ -71,7 +82,7 @@ class Indicator(ABC):
         """
         pass
 
-    def seed(self, candles: List[Candle]):
+    def seed(self, candles: List[CandleData]):
         """
         Warm up the indicator state with historical data.
         

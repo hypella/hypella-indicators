@@ -1,7 +1,7 @@
 from typing import List, Dict, Union
 import pandas as pd
 import numpy as np
-from hypella_indicators.core import Indicator, Candle
+from hypella_indicators.core import Indicator, CandleData
 
 class ADX(Indicator):
     """
@@ -35,7 +35,7 @@ class ADX(Indicator):
         self._adx_smooth = 0.0
         self._count = 0
 
-    def calculate(self, candles: List[Candle]) -> Dict[str, float]:
+    def calculate(self, candles: List[CandleData]) -> Dict[str, float]:
         if len(candles) < self.period:
              return {"adx": 0.0, "plus_di": 0.0, "minus_di": 0.0}
             
@@ -88,7 +88,7 @@ class ADX(Indicator):
             "minus_di": 0.0 if pd.isna(last_minus_di) else float(last_minus_di)
         }
 
-    def update(self, candle: Candle) -> Dict[str, float]:
+    def update(self, candle: CandleData) -> Dict[str, float]:
         if self._prev_high is None:
             self._prev_high = candle.high
             self._prev_low = candle.low
