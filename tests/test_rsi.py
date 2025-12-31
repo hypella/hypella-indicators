@@ -42,3 +42,18 @@ def test_rsi_precise_value():
     
     # Check if result matches 55.20 with 2 decimal places precision
     assert round(result, 2) == 55.20
+
+def test_rsi_incremental():
+    """Test that incremental calculation matches batch calculation."""
+    candles = load_candles("candles.json")
+    indicator = RSI(period=14)
+    
+    batch_result = indicator.calculate(candles)
+    
+    indicator.reset()
+    for candle in candles[:-1]:
+        indicator.update(candle)
+    
+    incremental_result = indicator.update(candles[-1])
+    
+    assert round(incremental_result, 4) == round(batch_result, 4)

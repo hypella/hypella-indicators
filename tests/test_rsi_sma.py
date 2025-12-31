@@ -64,3 +64,22 @@ def test_rsi_sma_precise_value():
     
     # Check if result matches 44.78 with 2 decimal places precision
     assert round(result, 2) == 44.78
+
+def test_rsi_sma_incremental():
+    """Test that incremental calculation matches batch calculation."""
+    candles = load_candles("candles.json")
+    
+    rsi_p = 14
+    sma_p = 14
+    
+    indicator = RSISMA(rsi_period=rsi_p, sma_period=sma_p)
+    
+    batch_result = indicator.calculate(candles)
+    
+    indicator.reset()
+    for candle in candles[:-1]:
+        indicator.update(candle)
+    
+    incremental_result = indicator.update(candles[-1])
+    
+    assert round(incremental_result, 2) == round(batch_result, 2)

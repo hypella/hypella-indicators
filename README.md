@@ -8,6 +8,29 @@ Standard library of trading indicators for the Hypella execution platform.
 pip install hypella-indicators
 ```
 
+## Usage Patterns
+
+Hypella Indicators supports two main calculation patterns depending on your environment:
+
+### 1. Stateless (Batch) Calculation
+Ideal for backtesting or one-off analysis where you have a full history of candles.
+```python
+indicator = RSI(period=14)
+result = indicator.calculate(candles) # Processes entire history
+```
+
+### 2. Stateful (Incremental) Calculation
+Optimized for **live trading** and minimized latency. Instead of recalculating the entire history on every tick, the indicator maintains internal state and updates in $O(1)$ time.
+
+```python
+# Initialization (typically on startup)
+indicator = RSI(period=14)
+indicator.seed(historical_candles)
+
+# Live update (on every new closed candle)
+latest_value = indicator.update(new_candle)
+```
+
 ## Structure
 
 Indicators are located in the `hypella_indicators/indicators` directory.
@@ -23,18 +46,24 @@ We welcome contributions of new indicators! Please follow these guidelines to en
     Create a new file in `hypella_indicators/indicators/` (e.g., `ema.py`).
 
 2.  **Implement the Class**:
-    Inherit from the `Indicator` base class and implement the `calculate` method.
+    Inherit from the `Indicator` base class and implement both the `calculate` (stateless) and `update` (stateful) methods.
     ```python
     from hypella_indicators.core import Indicator, Candle
-    from typing import List
+    from typing import List, Union
 
     class EMA(Indicator):
         def __init__(self, period: int = 8):
-            super().__init__(period=period)
             self.period = period
+            self.alpha = 2.0 / (period + 1.0)
+            super().__init__(period=period)
 
         def calculate(self, candles: List[Candle]) -> float:
-            # Implementation here...
+            # Batch implementation (e.g., using pandas)
+            pass
+
+        def update(self, candle: Candle) -> float:
+            # Incremental implementation (O(1) update)
+            # Update self._value and return it
             pass
     ```
 
@@ -118,8 +147,9 @@ Every indicator **must** have a corresponding test file in the `tests/` director
 
 3.  **Required Test Cases**:
     -   **Initialization**: Verify arguments are stored correctly.
-    -   **Insufficient Data**: Ensure it returns `0.0` or handles not enough candles gracefully.
+    -   **Batch Calculation**: Verify that `calculate()` correctly processes a list of candles.
     -   **Precise Value**: A test asserting the exact value (to 2 decimal places) against the provided dataset.
+    -   **Incremental Consistency**: Verify that `update()` produces the same result as `calculate()` when processing the same sequence of candles.
 
 ### Running Tests
 

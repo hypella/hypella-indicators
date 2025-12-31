@@ -37,3 +37,18 @@ def test_atr_precise_value():
     result = atr.calculate(candles)
     # 0.287728...
     assert round(result, 5) == 0.28773
+
+def test_atr_incremental():
+    """Test that incremental calculation matches batch calculation."""
+    candles = load_candles("candles.json")
+    indicator = ATR(period=14)
+    
+    batch_result = indicator.calculate(candles)
+    
+    indicator.reset()
+    for candle in candles[:-1]:
+        indicator.update(candle)
+    
+    incremental_result = indicator.update(candles[-1])
+    
+    assert round(incremental_result, 6) == round(batch_result, 6)

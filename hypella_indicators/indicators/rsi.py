@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Union
 import pandas as pd
 import numpy as np
 from hypella_indicators.core import Indicator, Candle
@@ -12,8 +12,20 @@ class RSI(Indicator):
     """
     
     def __init__(self, period: int = 14):
-        super().__init__(period=period)
         self.period = period
+        self.alpha = 1.0 / period
+        self._prev_close = None
+        self._avg_gain = 0.0
+        self._avg_loss = 0.0
+        self._count = 0
+        super().__init__(period=period)
+
+    def reset(self):
+        super().reset()
+        self._prev_close = None
+        self._avg_gain = 0.0
+        self._avg_loss = 0.0
+        self._count = 0
 
     def calculate_series(self, candles: List[Candle]) -> pd.Series:
         if len(candles) < self.period:
@@ -45,4 +57,40 @@ class RSI(Indicator):
         rsi = self.calculate_series(candles)
         if len(rsi) == 0:
             return 0.0
-        return float(rsi.iloc[-1])
+        val = rsi.iloc[-1]
+        return 0.0 if pd.isna(val) else float(val)
+
+    def update(self, candle: Candle) -> float:
+        if self._prev_close is None:
+            self._prev_close = candle.close
+            self._count = 1
+            self._value = 0.0
+            return 0.0
+
+        self._count += 1
+        delta = candle.close - self._prev_close
+        gain = max(delta, 0.0)
+        loss = max(-delta, 0.0)
+
+        if self._count == 2:
+            # First delta, seed the averages
+            self._avg_gain = gain
+            self._avg_loss = loss
+        else:
+            # Wilder's Smoothing EMA
+            self._avg_gain = (gain * self.alpha) + (self._avg_gain * (1.0 - self.alpha))
+            self._avg_loss = (loss * self.alpha) + (self._avg_loss * (1.0 - self.alpha))
+
+        self._prev_close = candle.close
+
+        if self._count > self.period:
+            if self._avg_loss == 0:
+                self._value = 100.0
+            else:
+                rs = self._avg_gain / self._avg_loss
+                self._value = 100.0 - (100.0 / (1.0 + rs))
+            self._initialized = True
+        else:
+            self._value = 0.0
+
+        return float(self._value)

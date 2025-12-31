@@ -28,3 +28,20 @@ def test_volume_sma_precise_value():
     
     # Check if result matches 197187
     assert round(result, 0) == 197187
+
+def test_volume_sma_incremental():
+    """Test that incremental calculation matches batch calculation."""
+    candles = load_candles("candles.json")
+    indicator = VolumeSMA(period=20)
+    
+    # Batch calculation
+    batch_result = indicator.calculate(candles)
+    
+    # Incremental calculation
+    indicator.reset()
+    for candle in candles[:-1]:
+        indicator.update(candle)
+    
+    incremental_result = indicator.update(candles[-1])
+    
+    assert round(incremental_result, 0) == round(batch_result, 0)

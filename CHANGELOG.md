@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2025-12-31
+
+### Added
+- **Stateful Indicators**: Introduced `update(candle)` and `seed(candles)` methods to the `Indicator` base class to support $O(1)$ incremental updates.
+- **Incremental Logic**: Optimized all core indicators (`SMA`, `EMA`, `RSI`, `ATR`, `ADX`, `BB`, `VolumeSMA`, `RSISMA`) for low-latency live trading.
+- **Incremental Consistency Tests**: Added rigorous testing to ensure stateful updates match batch calculations.
+
 ## [1.1.0] - 2025-12-29
 
 ### Added

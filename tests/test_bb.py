@@ -57,3 +57,20 @@ def test_bb_precise_value():
     assert round(result['lower'], 3) == 23.578
     # Calculated %B using full precision floats results in approx 0.782
     assert round(result['percent_b'], 3) == 0.782
+
+def test_bb_incremental():
+    """Test that incremental calculation matches batch calculation."""
+    candles = load_candles("candles.json")
+    indicator = BollingerBands(period=20)
+    
+    batch_result = indicator.calculate(candles)
+    
+    indicator.reset()
+    for candle in candles[:-1]:
+        indicator.update(candle)
+    
+    incremental_result = indicator.update(candles[-1])
+    
+    assert round(incremental_result["middle"], 6) == round(batch_result["middle"], 6)
+    assert round(incremental_result["upper"], 6) == round(batch_result["upper"], 6)
+    assert round(incremental_result["lower"], 6) == round(batch_result["lower"], 6)

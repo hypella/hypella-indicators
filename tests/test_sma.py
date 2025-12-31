@@ -28,3 +28,20 @@ def test_sma_precise_value():
     
     # Check if result matches 23.921 with 3 decimal places precision
     assert round(result, 3) == 23.921
+
+def test_sma_incremental():
+    """Test that incremental calculation matches batch calculation."""
+    candles = load_candles("candles.json")
+    indicator = SMA(period=10)
+    
+    # Batch calculation
+    batch_result = indicator.calculate(candles)
+    
+    # Incremental calculation
+    indicator.reset()
+    for candle in candles[:-1]:
+        indicator.update(candle)
+    
+    incremental_result = indicator.update(candles[-1])
+    
+    assert round(incremental_result, 6) == round(batch_result, 6)

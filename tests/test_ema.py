@@ -28,3 +28,20 @@ def test_ema_precise_value():
     
     # Check if result matches 24.005 with 3 decimal places precision
     assert round(result, 3) == 24.005
+
+def test_ema_incremental():
+    """Test that incremental calculation matches batch calculation."""
+    candles = load_candles("candles.json")
+    indicator = EMA(period=10)
+    
+    batch_result = indicator.calculate(candles)
+    
+    indicator.reset()
+    for candle in candles[:-1]:
+        indicator.update(candle)
+    
+    incremental_result = indicator.update(candles[-1])
+    
+    # EMA might have slight floating point differences due to different calculation order, 
+    # but they should be very close.
+    assert round(incremental_result, 6) == round(batch_result, 6)

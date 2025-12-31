@@ -11,8 +11,14 @@ class EMA(Indicator):
     """
     
     def __init__(self, period: int = 9):
-        super().__init__(period=period)
         self.period = period
+        self.alpha = 2.0 / (period + 1.0)
+        self._count = 0
+        super().__init__(period=period)
+
+    def reset(self):
+        super().reset()
+        self._count = 0
 
     def calculate_series(self, candles: List[Candle]) -> pd.Series:
         if len(candles) < self.period:
@@ -27,3 +33,17 @@ class EMA(Indicator):
             return 0.0
         val = series.iloc[-1]
         return 0.0 if pd.isna(val) else float(val)
+
+    def update(self, candle: Candle) -> float:
+        self._count += 1
+        
+        if self._value is None:
+            self._value = candle.close
+        else:
+            self._value = (candle.close * self.alpha) + (self._value * (1.0 - self.alpha))
+            
+        if self._count >= self.period:
+            self._initialized = True
+            
+        # Return 0.0 if not initialized to match current calculate() behavior
+        return float(self._value) if self._initialized else 0.0

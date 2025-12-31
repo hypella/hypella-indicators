@@ -64,3 +64,18 @@ def test_adx_precise_value():
     assert round(result['adx'], 2) == 19.20
     assert round(result['plus_di'], 2) == 21.35
     assert round(result['minus_di'], 2) == 20.30
+
+def test_adx_incremental():
+    """Test that incremental calculation matches batch calculation."""
+    candles = load_candles("candles.json")
+    indicator = ADX(period=14)
+    
+    batch_result = indicator.calculate(candles)
+    
+    indicator.reset()
+    for candle in candles[:-1]:
+        indicator.update(candle)
+    
+    incremental_result = indicator.update(candles[-1])
+    
+    assert round(incremental_result["adx"], 4) == round(batch_result["adx"], 4)

@@ -1,5 +1,6 @@
 from typing import List
 import pandas as pd
+from collections import deque
 from hypella_indicators.core import Indicator, Candle
 
 class VolumeSMA(Indicator):
@@ -11,8 +12,13 @@ class VolumeSMA(Indicator):
     """
     
     def __init__(self, period: int = 20):
-        super().__init__(period=period)
         self.period = period
+        self._history = deque(maxlen=period)
+        super().__init__(period=period)
+
+    def reset(self):
+        super().reset()
+        self._history = deque(maxlen=self.period)
 
     def calculate_series(self, candles: List[Candle]) -> pd.Series:
         if len(candles) < self.period:
@@ -27,3 +33,14 @@ class VolumeSMA(Indicator):
             return 0.0
         val = series.iloc[-1]
         return 0.0 if pd.isna(val) else float(val)
+
+    def update(self, candle: Candle) -> float:
+        self._history.append(candle.volume)
+        
+        if len(self._history) < self.period:
+            self._value = 0.0
+        else:
+            self._value = sum(self._history) / self.period
+            self._initialized = True
+            
+        return float(self._value)

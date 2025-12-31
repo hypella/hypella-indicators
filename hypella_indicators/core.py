@@ -29,6 +29,17 @@ class Indicator(ABC):
     def __init__(self, **kwargs):
         """Initialize indicator with configuration arguments."""
         self.config = kwargs
+        self.reset()
+
+    def reset(self):
+        """Reset the indicator state."""
+        self._value: Union[float, Dict[str, float], None] = None
+        self._initialized = False
+
+    @property
+    def value(self) -> Union[float, Dict[str, float], None]:
+        """Return the latest calculated value."""
+        return self._value
 
     def candles_to_df(self, candles: List[Candle]) -> pd.DataFrame:
         """Helper to convert list of Candles to DataFrame."""
@@ -37,7 +48,7 @@ class Indicator(ABC):
     @abstractmethod
     def calculate(self, candles: List[Candle]) -> Union[float, Dict[str, float]]:
         """
-        Calculate the latest indicator value based on historical candles.
+        Calculate the latest indicator value based on historical candles (stateless).
         
         Args:
             candles: List of historical candles, ending with the most recent closed candle.
@@ -46,3 +57,27 @@ class Indicator(ABC):
             The calculated indicator value as a float, or a dictionary for multi-value indicators.
         """
         pass
+
+    @abstractmethod
+    def update(self, candle: Candle) -> Union[float, Dict[str, float]]:
+        """
+        Update indicator with a new candle and return the latest value (stateful).
+        
+        Args:
+            candle: The latest closed candle.
+            
+        Returns:
+            The newly calculated indicator value.
+        """
+        pass
+
+    def seed(self, candles: List[Candle]):
+        """
+        Warm up the indicator state with historical data.
+        
+        Args:
+            candles: Historical candles for initialization.
+        """
+        self.reset()
+        for candle in candles:
+            self.update(candle)
